@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>线程池的核心参数以及执行流程</title>
+    <url>/2020/02/24/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E6%A0%B8%E5%BF%83%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/</url>
+    <content><![CDATA[<h1 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h1><a id="more"></a>
+
+<h2 id="线程池类型"><a href="#线程池类型" class="headerlink" title="线程池类型"></a>线程池类型</h2><h3 id="newFixedThreadPool"><a href="#newFixedThreadPool" class="headerlink" title="newFixedThreadPool"></a>newFixedThreadPool</h3><p>创建一个可重用固定线程数的线程池，以共享的无界队列方式来运行这些线程。在任意点，在大<br>多数 nThreads 线程会处于处理任务的活动状态。如果在所有线程处于活动状态时提交附加任务，<br>则在有可用线程之前，附加任务将在队列中等待。如果在关闭前的执行期间由于失败而导致任何<br>线程终止，那么一个新线程将代替它执行后续的任务（如果需要）。在某个线程被显式地关闭之<br>前，池中的线程将一直存在。</p>
+<h3 id="newCachedThreadPool"><a href="#newCachedThreadPool" class="headerlink" title="newCachedThreadPool"></a>newCachedThreadPool</h3><p>创建一个可根据需要创建新线程的线程池，但是在以前构造的线程可用时将重用它们。对于执行<br>很多短期异步任务的程序而言，这些线程池通常可提高程序性能。调用 execute 将重用以前构造<br>的线程（如果线程可用）。如果现有线程没有可用的，则创建一个新线程并添加到池中。终止并<br>从缓存中移除那些已有 60 秒钟未被使用的线程。因此，长时间保持空闲的线程池不会使用任何资<br>源。</p>
+<h3 id="newScheduledThreadPool"><a href="#newScheduledThreadPool" class="headerlink" title="newScheduledThreadPool"></a>newScheduledThreadPool</h3><p>创建一个线程池，它可安排在给定延迟后运行命令或者定期地执行。</p>
+<h3 id="newSingleThreadExecutor"><a href="#newSingleThreadExecutor" class="headerlink" title="newSingleThreadExecutor"></a>newSingleThreadExecutor</h3><p>返回一个只有一个线程的线程池,这个线程池可以在线程死后（或发生异常时）重新启动一个线程来替代原来的线程继续执行下去！</p>
+<h2 id="核心参数"><a href="#核心参数" class="headerlink" title="核心参数"></a>核心参数</h2><h3 id="corePoolSize"><a href="#corePoolSize" class="headerlink" title="corePoolSize"></a>corePoolSize</h3><p>核心线程数，该参数说明了在线程池中保持核心线程的数量，由自己定义，刚创建线程池时，里面的核心线程数为0，随着任务的添加，达到核心线程数，执行完任务之后，线程池里面的核心线程数一直维持在设置的核心线程数。</p>
+<h3 id="maximumPoolSize"><a href="#maximumPoolSize" class="headerlink" title="maximumPoolSize"></a>maximumPoolSize</h3><p>最大线程数，该参数定义了一个线程池中最多能容纳多少个线程。当一个任务提交到线程池中时，如果线程数量达到了核心线程数，并且任务队列已满，不能再向任务队列中添加任务时，这时会检查任务是否达到了最大线程数，如果未达到，则创建新线程，执行任务，否则，执行拒绝策略。</p>
+<h3 id="keepAliveTime"><a href="#keepAliveTime" class="headerlink" title="keepAliveTime"></a>keepAliveTime</h3><p>（最大线程数—核心线程数）线程存活时间，线程池中大于核心线程数的那部分线程，即线程数总数量减去核心线程数的那部分线程，在执行完任务之后，在线程池中存活的时间。</p>
+<h3 id="workQueue"><a href="#workQueue" class="headerlink" title="workQueue"></a>workQueue</h3><p>任务队列，用来做缓冲作用，当提交到线程池中的任务核心线程数量不够用时，所有的核心线程都在执行任务，会将任务存到任务队列中，等待核心线程来执行。该参数主要是在核心线程数都在执行任务时，才起作用的参数，主要用来缓存任务。</p>
+<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><h3 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h3><p><img src="https://img-blog.csdnimg.cn/20200224204540127.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="流程梳理"><a href="#流程梳理" class="headerlink" title="流程梳理"></a>流程梳理</h3><p>用户提交任务，查看核心线程池是否满，没满则创建线程，执行任务，<br>满了则交给缓冲队列，缓冲队列没满，则将任务添加到队列，满了，则<br>判断最大线程池是否满了，没满则创建线程，执行任务，满了则拒绝策略</p>
+]]></content>
+  </entry>
+  <entry>
     <title>RabbitMQ拓展</title>
     <url>/2020/02/16/RabbitMQ%E6%8B%93%E5%B1%95/</url>
     <content><![CDATA[<h1 id="RabbitMQ拓展"><a href="#RabbitMQ拓展" class="headerlink" title="RabbitMQ拓展"></a>RabbitMQ拓展</h1><a id="more"></a>

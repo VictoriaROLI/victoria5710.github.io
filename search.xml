@@ -1,6 +1,215 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Docker的安装以及使用</title>
+    <url>/2020/02/28/Docker%E7%9A%84%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<h1 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h1><p>Docker 是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可移植的镜像中，然后发布到任何流行的 Linux或Windows 机器上，也可以实现虚拟化。容器是完全使用沙箱机制，相互之间不会有任何接口。</p>
+<a id="more"></a>
+
+<h2 id="Docker-的安装"><a href="#Docker-的安装" class="headerlink" title="Docker 的安装"></a>Docker 的安装</h2><p>1 如果有旧版本，建议先删除旧版本</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> sudo yum remove docker \</span><br><span class="line">                  docker<span class="literal">-client</span> \</span><br><span class="line">                  docker<span class="literal">-client</span><span class="literal">-latest</span> \</span><br><span class="line">                  docker<span class="literal">-common</span> \</span><br><span class="line">                  docker<span class="literal">-latest</span> \</span><br><span class="line">                  docker<span class="literal">-latest</span><span class="literal">-logrotate</span> \</span><br><span class="line">                  docker<span class="literal">-logrotate</span> \</span><br><span class="line">                  docker<span class="literal">-engine</span></span><br></pre></td></tr></table></figure>
+<p>2.安装所需的软件包。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> sudo yum install <span class="literal">-y</span> yum<span class="literal">-utils</span> \</span><br><span class="line">  device<span class="literal">-mapper</span><span class="literal">-persistent</span><span class="literal">-data</span> \</span><br><span class="line">  lvm2</span><br></pre></td></tr></table></figure>
+<p>3.使用以下命令来设置稳定的存储库。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> sudo yum<span class="literal">-config</span><span class="literal">-manager</span> \</span><br><span class="line">    -<span class="literal">-add</span><span class="literal">-repo</span> \</span><br><span class="line">    https://download.docker.com/linux/centos/docker<span class="literal">-ce</span>.repo</span><br></pre></td></tr></table></figure>
+
+<p>4.可选：启用每晚或测试存储库。<br>    （1）启用每晚存储库。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> sudo yum<span class="literal">-config</span><span class="literal">-manager</span> -<span class="literal">-enable</span> docker<span class="literal">-ce</span><span class="literal">-nightly</span></span><br></pre></td></tr></table></figure>
+<p> （2）启用测试通道。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> sudo yum<span class="literal">-config</span><span class="literal">-manager</span> -<span class="literal">-enable</span> docker<span class="literal">-ce</span><span class="literal">-test</span></span><br></pre></td></tr></table></figure>
+<p>5.安装DOCKER ENGINE-社区</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> sudo yum install docker<span class="literal">-ce</span> docker<span class="literal">-ce</span><span class="literal">-cli</span> containerd.io</span><br></pre></td></tr></table></figure>
+<p>6.启动Docker</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> sudo systemctl start docker</span><br></pre></td></tr></table></figure>
+<p>7.测试Docker</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$</span> sudo docker run hello<span class="literal">-world</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Docker的基本组成"><a href="#Docker的基本组成" class="headerlink" title="Docker的基本组成"></a>Docker的基本组成</h2><h3 id="模型图"><a href="#模型图" class="headerlink" title="模型图"></a>模型图</h3><p><img src="https://img-blog.csdnimg.cn/20200228000639716.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="镜像"><a href="#镜像" class="headerlink" title="镜像"></a>镜像</h3><p>Docker 镜像（Image）就是一个只读的模板。镜像可以用来创建 Docker 容器，一个镜像可以创建很多容器。</p>
+<h3 id="容器"><a href="#容器" class="headerlink" title="容器"></a>容器</h3><p>Docker 利用容器（Container）独立运行的一个或一组应用。容器是用镜像创建的运行实例。</p>
+<p>它可以被启动、开始、停止、删除。每个容器都是相互隔离的、保证安全的平台。</p>
+<p>可以把容器看做是一个简易版的 Linux 环境（包括root用户权限、进程空间、用户空间和网络空间等）和运行在其中的应用程序。</p>
+<p>容器的定义和镜像几乎一模一样，也是一堆层的统一视角，唯一区别在于容器的最上面那一层是可读可写的。</p>
+<h3 id="仓库"><a href="#仓库" class="headerlink" title="仓库"></a>仓库</h3><p>仓库（Repository）是集中存放镜像文件的场所。</p>
+<p>仓库(Repository)和仓库注册服务器（Registry）是有区别的。仓库注册服务器上往往存放着多个仓库，每个仓库中又包含了多个镜像，每个镜像有不同的标签（tag）。</p>
+<p>仓库分为公开仓库（Public）和私有仓库（Private）两种形式。</p>
+<p>最大的公开仓库是 Docker Hub(<a href="https://hub.docker.com/)，" target="_blank" rel="noopener">https://hub.docker.com/)，</a></p>
+<p>存放了数量庞大的镜像供用户下载。国内的公开仓库包括阿里云 、网易云 等</p>
+<h2 id="Docker是怎么工作的"><a href="#Docker是怎么工作的" class="headerlink" title="Docker是怎么工作的"></a>Docker是怎么工作的</h2><h3 id="模型图-1"><a href="#模型图-1" class="headerlink" title="模型图"></a>模型图</h3><p><img src="https://img-blog.csdnimg.cn/20200228000924221.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>Docker是一个Client-Server结构的系统，Docker守护进程运行在主机上， 然后通过Socket连接从客户端访问，守护进程从客户端接受命令并管理运行在主机上的容器。 容器，是一个运行时环境，就是我们前面说到的集装箱。</p>
+<h2 id="Docker和VM"><a href="#Docker和VM" class="headerlink" title="Docker和VM"></a>Docker和VM</h2><h3 id="模型图对比"><a href="#模型图对比" class="headerlink" title="模型图对比"></a>模型图对比</h3><p><img src="https://img-blog.csdnimg.cn/20200228001014347.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20200228001023297.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="Docker为什么比VM快"><a href="#Docker为什么比VM快" class="headerlink" title="Docker为什么比VM快"></a>Docker为什么比VM快</h3><p>(1)docker有着比虚拟机更少的抽象层。由亍docker不需要Hypervisor实现硬件资源虚拟化,运行在docker容器上的程序直接使用的都是实际物理机的硬件资源。因此在CPU、内存利用率上docker将会在效率上有明显优势。</p>
+<p>(2)docker利用的是宿主机的内核,而不需要Guest OS。因此,当新建一个容器时,docker不需要和虚拟机一样重新加载一个操作系统内核。仍而避免引寻、加载操作系统内核返个比较费时费资源的过程,当新建一个虚拟机时,虚拟机软件需要加载Guest OS,返个新建过程是分钟级别的。而docker由于直接利用宿主机的操作系统,则省略了返个过程,因此新建一个docker容器只需要几秒钟。</p>
+<h2 id="Docker常用命令"><a href="#Docker常用命令" class="headerlink" title="Docker常用命令"></a>Docker常用命令</h2><h3 id="帮助命令"><a href="#帮助命令" class="headerlink" title="帮助命令"></a>帮助命令</h3><ol>
+<li>docker version ： 获取docker的版本号</li>
+<li>docker info : 显示 Docker 系统信息，包括镜像和容器数</li>
+<li>docker –help : docker的全部命令</li>
+</ol>
+<h3 id="镜像命令"><a href="#镜像命令" class="headerlink" title="镜像命令"></a>镜像命令</h3><ol>
+<li>docker images : 列出本地实例</li>
+<li>docker search : 在hub上搜索镜像  例子：docker search tomcat</li>
+<li>docker pull : 在hub上下载镜像 例子：docker pull tomcat</li>
+<li>docker rmi : 删除本地镜像 例子：docker rmi -f tomcat</li>
+<li>docker rmi : 删除多个 例子：docker rmi -f tomcat centos</li>
+<li>docker rmi : 删除所有 例子：docker rmi -f $(docker images -qa)</li>
+<li>docker commit：提交容器副本，使之成为一个新的镜像 例子：docker commit -a=”作者” -m=”描述” 容器ID 要创建的目标镜像名:TAR</li>
+</ol>
+<h3 id="容器命令"><a href="#容器命令" class="headerlink" title="容器命令"></a>容器命令</h3><ol>
+<li>docker run ：新建并且启动容器 例子：docker run tomcat</li>
+<li>docker ps : 列出所有在运行的容器</li>
+<li>exit : 退出容器停止容器</li>
+<li>ctrl+p+q ：容器不停止退出容器</li>
+<li>docker start : 启动容器 例子：docker start 容器ID或者容器名</li>
+<li>docker restart ：重启容器 例子：docker restart 容器ID或者容器名</li>
+<li>docker stop ：停止容器 例子：docker stop 容器ID或者容器名</li>
+<li>docker kill：强制停止容器 例子：docker kill 容器ID或者容器名</li>
+<li>docker rm ：删除已停止的容器 例子：docker rm -f 容器ID或者容器名</li>
+<li>docker run -d ：以守护进程的方式启动 例子：docker run -d tomcat</li>
+<li>docker run –it ：一交互式进程的方式启动 例子：docker run -it tomcat</li>
+<li>docker top ：查看容器内运行的进程 例子：docker top 容器ID或者容器名</li>
+<li>docker inspect ：查看容器内部细节 例子：docker inspect 容器ID或者容器名</li>
+<li>docker exec：进入正在运行的容器中 例子：docker exec -d/it 容器ID或者容器名</li>
+<li>docker attach ：重新进入容器 例子：docker attach 容器ID或者容器名</li>
+<li>docker cp ：将容器内地文件拷贝的主机上 例子：docker cp 容器ID:容器内的路径 主机的路径</li>
+</ol>
+<h2 id="Docker镜像"><a href="#Docker镜像" class="headerlink" title="Docker镜像"></a>Docker镜像</h2><h3 id="UnionFS（联合文件系统）"><a href="#UnionFS（联合文件系统）" class="headerlink" title="UnionFS（联合文件系统）"></a>UnionFS（联合文件系统）</h3><p>Union文件系统（UnionFS）是一种分层、轻量级并且高性能的文件系统，它支持对文件系统的修改作为一次提交来一层层的叠加，同时可以将不同目录挂载到同一个虚拟文件系统下(unite several directories into a single virtual filesystem)。Union 文件系统是 Docker 镜像的基础。镜像可以通过分层来进行继承，基于基础镜像（没有父镜像），可以制作各种具体的应用镜像。</p>
+<h4 id="特征"><a href="#特征" class="headerlink" title="特征"></a>特征</h4><p>一次同时加载多个文件系统，但从外面看起来，只能看到一个文件系统，联合加载会把各层文件系统叠加起来，这样最终的文件系统会包含所有底层的文件和目录</p>
+<h3 id="Docker镜像加载原理"><a href="#Docker镜像加载原理" class="headerlink" title="Docker镜像加载原理"></a>Docker镜像加载原理</h3><p>docker的镜像实际上由一层一层的文件系统组成，这种层级的文件系统UnionFS。</p>
+<p>bootfs(boot file system)主要包含bootloader和kernel, bootloader主要是引导加载kernel, Linux刚启动时会加载bootfs文件系统，在Docker镜像的最底层是bootfs。这一层与我们典型的Linux/Unix系统是一样的，包含boot加载器和内核。当boot加载完成之后整个内核就都在内存中了，此时内存的使用权已由bootfs转交给内核，此时系统也会卸载bootfs。</p>
+<p>rootfs (root file system) ，在bootfs之上。包含的就是典型 Linux 系统中的 /dev, /proc, /bin, /etc 等标准目录和文件。rootfs就是各种不同的操作系统发行版，比如Ubuntu，Centos等等。<br><img src="https://img-blog.csdnimg.cn/20200228003050705.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br> 平时我们安装进虚拟机的CentOS都是好几个G，为什么docker这里才200M？？<br> <img src="https://img-blog.csdnimg.cn/20200228003106332.png" alt="在这里插入图片描述"><br>对于一个精简的OS，rootfs可以很小，只需要包括最基本的命令、工具和程序库就可以了，因为底层直接用Host的kernel，自己只需要提供 rootfs 就行了。由此可见对于不同的linux发行版, bootfs基本是一致的, rootfs会有差别, 因此不同的发行版可以公用bootfs。</p>
+<h3 id="分层的镜像"><a href="#分层的镜像" class="headerlink" title="分层的镜像"></a>分层的镜像</h3><p>以我们的pull为例，在下载的过程中我们可以看到docker的镜像好像是在一层一层的在下载<br><img src="https://img-blog.csdnimg.cn/20200228003145393.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="好处"><a href="#好处" class="headerlink" title="好处"></a>好处</h3><h4 id="共享资源"><a href="#共享资源" class="headerlink" title="共享资源"></a>共享资源</h4><p> 比如：有多个镜像都从相同的 base 镜像构建而来，那么宿主机只需在磁盘上保存一份base镜像，</p>
+<p>同时内存中也只需加载一份 base 镜像，就可以为所有容器服务了。而且镜像的每一层都可以被共享。</p>
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><p>Docker镜像都是只读的，当容器启动时，一个新的可写成被加载到镜像的顶部，这一次通常被称作”容器层”,”容器层”之下的都叫”镜像层”。</p>
+<h2 id="容器数据卷"><a href="#容器数据卷" class="headerlink" title="容器数据卷"></a>容器数据卷</h2><h3 id="Docker的理念"><a href="#Docker的理念" class="headerlink" title="Docker的理念"></a>Docker的理念</h3><ul>
+<li><p>将运用与运行的环境打包形成容器运行 ，运行可以伴随着容器，但是我们对数据的要求希望是持久化的</p>
+</li>
+<li><p>容器之间希望有可能共享数据</p>
+</li>
+<li><p>Docker容器产生的数据，如果不通过docker commit生成新的镜像，使得数据做为镜像的一部分保存下来，那么当容器删除后，数据自然也就没有了。</p>
+</li>
+<li><p>为了能保存数据在docker中我们使用卷。</p>
+</li>
+</ul>
+<h3 id="卷"><a href="#卷" class="headerlink" title="卷"></a>卷</h3><p> 卷就是目录或文件，存在于一个或多个容器中，由docker挂载到容器，但不属于联合文件系统，因此能够绕过Union File System提供一些用于持续存储或共享数据的特性：</p>
+<p> 卷的设计目的就是数据的持久化，完全独立于容器的生存周期，因此Docker不会在容器删除时删除其挂载的数据卷 </p>
+<h4 id="特点-1"><a href="#特点-1" class="headerlink" title="特点"></a>特点</h4><p>1：数据卷可在容器之间共享或重用数据</p>
+<p>2：卷中的更改可以直接生效</p>
+<p>3：数据卷中的更改不会包含在镜像的更新中</p>
+<p>4：数据卷的生命周期一直持续到没有容器使用它为止</p>
+<h3 id="数据卷添加"><a href="#数据卷添加" class="headerlink" title="数据卷添加"></a>数据卷添加</h3><h4 id="命令添加"><a href="#命令添加" class="headerlink" title="命令添加"></a>命令添加</h4><p>docker run -it -v 主机路径:容器内路径 容器ID或者容器名 /bin/bash</p>
+<h4 id="DockerFile添加"><a href="#DockerFile添加" class="headerlink" title="DockerFile添加"></a>DockerFile添加</h4><ol>
+<li>创建一个文件  mydockerfile</li>
+<li>编写mydockerfile文件</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="comment"># volume test</span></span><br><span class="line"></span><br><span class="line">FROM centos</span><br><span class="line"></span><br><span class="line">VOLUME [<span class="string">"/dataVolumeContainer1"</span>,<span class="string">"/dataVolumeContainer2"</span>]</span><br><span class="line"></span><br><span class="line">CMD echo <span class="string">"finished,--------success1"</span></span><br><span class="line"></span><br><span class="line">CMD /bin/bash</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>build成一个新的镜像   例子：docker build -f 文件路径 -t 镜像名</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker build <span class="operator">-f</span> /mydocker/mydockerfile <span class="literal">-t</span> /victoria/centos</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>执行容器</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker run <span class="literal">-it</span> /victoria/centos</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据卷容器"><a href="#数据卷容器" class="headerlink" title="数据卷容器"></a>数据卷容器</h3><p>命名的容器挂载数据卷，其它容器通过挂载这个(父容器)实现数据共享，挂载数据卷的容器，称之为数据卷容器</p>
+<h3 id="容器间传递共享"><a href="#容器间传递共享" class="headerlink" title="容器间传递共享"></a>容器间传递共享</h3><ol>
+<li>先创建并且启动一个父容器 </li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker run <span class="literal">-it</span> -<span class="literal">-name</span> dc01 victoria/centos</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>创建子容器继承父容器  例子： docker  –volumes-from 父容器</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker run <span class="literal">-it</span> -<span class="literal">-name</span> dc02 -<span class="literal">-volumes</span><span class="literal">-from</span> dc01 victoria/centos</span><br></pre></td></tr></table></figure>
+<h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><p> 容器之间配置信息的传递，数据卷的生命周期一直持续到没有容器使用它为止</p>
+<h2 id="DockerFile"><a href="#DockerFile" class="headerlink" title="DockerFile"></a>DockerFile</h2><h3 id="DockerFile是什么"><a href="#DockerFile是什么" class="headerlink" title="DockerFile是什么"></a>DockerFile是什么</h3><p>DockerFile是用来构建Docker镜像的构建文件，是由一系列命令和参数构成的脚本。</p>
+<h3 id="DockerFile构建的步骤"><a href="#DockerFile构建的步骤" class="headerlink" title="DockerFile构建的步骤"></a>DockerFile构建的步骤</h3><ol>
+<li>编写DockerFile文件</li>
+<li>docker build</li>
+<li>docker run</li>
+</ol>
+<h3 id="Docker内容基础知识"><a href="#Docker内容基础知识" class="headerlink" title="Docker内容基础知识"></a>Docker内容基础知识</h3><ol>
+<li>每条保留字指令都必须为答谢字母且后面要跟随至少一个参数</li>
+<li>指令按照从上到下，顺序执行</li>
+<li>#表示注释</li>
+<li>每条指令都会创建一个新的镜像层，并对镜像进行提交</li>
+</ol>
+<h3 id="Docker执行DockerFile大致流程"><a href="#Docker执行DockerFile大致流程" class="headerlink" title="Docker执行DockerFile大致流程"></a>Docker执行DockerFile大致流程</h3><ol>
+<li>docker从基础镜像运行一个容器</li>
+<li>执行一条指令并对容器作出修改</li>
+<li>执行类似docker commit的操作提交一个新的镜像层</li>
+<li>docker再基于刚提交的镜像运行一个新容器</li>
+<li>执行dockerfile中的下一条指令直到所有指令都执行完成</li>
+</ol>
+<h3 id="DockerFile保留字"><a href="#DockerFile保留字" class="headerlink" title="DockerFile保留字"></a>DockerFile保留字</h3><table>
+<thead>
+<tr>
+<th>保留字</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>FROM</td>
+<td>基础镜像，当前新镜像是基于哪个镜像的</td>
+</tr>
+<tr>
+<td>MAINTAINER</td>
+<td>镜像维护者的姓名和邮箱地址</td>
+</tr>
+<tr>
+<td>RUN</td>
+<td>容器构建时需要运行的命令</td>
+</tr>
+<tr>
+<td>EXPOSE</td>
+<td>当前容器对外暴露出的端口</td>
+</tr>
+<tr>
+<td>WORKDIR</td>
+<td>指定在创建容器后，终端默认的进来工作目录，一个落脚点</td>
+</tr>
+<tr>
+<td>ENV</td>
+<td>用来在构建镜像过程中设置环境变量</td>
+</tr>
+<tr>
+<td>ADD</td>
+<td>将主机目录下的文件拷贝进镜像且ADD命令会自动处理URL和解压tar压缩包</td>
+</tr>
+<tr>
+<td>COPY</td>
+<td>类似ADD，拷贝文件和目录到镜像中</td>
+</tr>
+<tr>
+<td>VOLUME</td>
+<td>容器数据卷，用于数据保存和持久化工作</td>
+</tr>
+<tr>
+<td>CMD</td>
+<td>指定一个容器启动时要运行的命令，DockerFile中可以有多个CMD指令，但只有最后一个生效，CMD会被docker run之后的参数替换</td>
+</tr>
+<tr>
+<td>ENTRYPOINT</td>
+<td>指定一个容器启动时要运行的命令，ENTRYPOINT的目的和CMD一样，都是在指定容器启动程序及参数，但不会被docker run之后的参数替换</td>
+</tr>
+<tr>
+<td>ONBUILD</td>
+<td>当创建一个被继承的DockerFile时运行命令，父镜像在被子镜像继承后父镜像的onbuild被触发</td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>线程池的核心参数以及执行流程</title>
     <url>/2020/02/24/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E6%A0%B8%E5%BF%83%E5%8F%82%E6%95%B0%E4%BB%A5%E5%8F%8A%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/</url>
     <content><![CDATA[<h1 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h1><a id="more"></a>
@@ -16,6 +225,12 @@
 <h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><h3 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h3><p><img src="https://img-blog.csdnimg.cn/20200224204540127.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
 <h3 id="流程梳理"><a href="#流程梳理" class="headerlink" title="流程梳理"></a>流程梳理</h3><p>用户提交任务，查看核心线程池是否满，没满则创建线程，执行任务，<br>满了则交给缓冲队列，缓冲队列没满，则将任务添加到队列，满了，则<br>判断最大线程池是否满了，没满则创建线程，执行任务，满了则拒绝策略</p>
 ]]></content>
+      <categories>
+        <category>Java基础</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+      </tags>
   </entry>
   <entry>
     <title>RabbitMQ拓展</title>
@@ -274,8 +489,8 @@
         <category>Java高级</category>
       </categories>
       <tags>
-        <tag>Java</tag>
         <tag>RabbitMQ</tag>
+        <tag>Java</tag>
       </tags>
   </entry>
   <entry>

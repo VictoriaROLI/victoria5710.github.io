@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":true,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Redis安装以及常用操作Redis介绍Redis是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis安装以及常用操作">
+<meta property="og:url" content="http://yoursite.com/2020/03/02/Redis%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:site_name" content="故里の小屋">
+<meta property="og:description" content="Redis安装以及常用操作Redis介绍Redis是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200302112454142.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200302112541502.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200302112622566.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200302112942900.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200302112955404.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200302114033147.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200302114854194.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200302114539922.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200302115117540.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020030211522436.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200302115343346.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200302120055217.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020030212055249.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2020-03-02T04:13:54.000Z">
+<meta property="article:modified_time" content="2020-03-02T04:14:59.141Z">
+<meta property="article:author" content="故里">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200302112454142.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/03/02/Redis%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Redis安装以及常用操作 | 故里の小屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <a href="https://github.com/victoria5710" target="_blank" rel="noopener" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">故里の小屋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/02/Redis%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/me.JPG">
+      <meta itemprop="name" content="故里">
+      <meta itemprop="description" content="惊鸿一瞥">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="故里の小屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis安装以及常用操作
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-02 12:13:54 / 修改时间：12:14:59" itemprop="dateCreated datePublished" datetime="2020-03-02T12:13:54+08:00">2020-03-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/03/02/Redis%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/03/02/Redis%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Redis安装以及常用操作"><a href="#Redis安装以及常用操作" class="headerlink" title="Redis安装以及常用操作"></a>Redis安装以及常用操作</h1><h2 id="Redis介绍"><a href="#Redis介绍" class="headerlink" title="Redis介绍"></a>Redis介绍</h2><p>Redis是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。</p>
+<a id="more"></a>
+
+<h2 id="Redis安装"><a href="#Redis安装" class="headerlink" title="Redis安装"></a>Redis安装</h2><h3 id="Docker版"><a href="#Docker版" class="headerlink" title="Docker版"></a>Docker版</h3><h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull redis</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置redis-conf"><a href="#配置redis-conf" class="headerlink" title="配置redis.conf"></a>配置redis.conf</h4><p>进入或者创建 /usr/local/docker/redis 目录下创建redis.conf</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/docker/redis</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /usr/local/docker/redis/redis.conf</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>daemonize ： 默认为no，修改为yes启用守护线程<br>port ：设定端口号，默认为6379<br>bind ：绑定IP地址<br>databases ：数据库数量，默认16<br>save <second> <changes> ：指定多少时间、有多少次更新操作，就将数据同步到数据文件<br>#redis默认配置有三个条件，满足一个即进行持久化<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    save 900 1 #900s有1个更改<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        save 300 10 #300s有10个更改<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        save 60 10000 #60s有10000更改<br>dbfilename ：指定本地数据库的文件名，默认为dump.rdb<br>dir ：指定本地数据库的存放目录，默认为./当前文件夹<br>requirepass ：设置密码，默认关闭<br>redis -cli -h host -p port -a password</p>
+</blockquote>
+<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><p>启动redis服务</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run <span class="literal">-p</span> <span class="number">6379</span>:<span class="number">6379</span> <span class="literal">-v</span> /usr/local/docker/redis/redis.conf:/etc/redis/redis.conf <span class="literal">-v</span> /usr/local/docker/redis/<span class="keyword">data</span>:/<span class="keyword">data</span> -<span class="literal">-name</span> myredis <span class="literal">-d</span> redis</span><br></pre></td></tr></table></figure>
+
+<p>进入redis</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec <span class="literal">-it</span> redisID /bin/bash</span><br></pre></td></tr></table></figure>
+<p>运行redis</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis<span class="literal">-cli</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Linux版"><a href="#Linux版" class="headerlink" title="Linux版"></a>Linux版</h3><p>后期更新</p>
+<h3 id="Windows版"><a href="#Windows版" class="headerlink" title="Windows版"></a>Windows版</h3><p>后期更新，不推荐使用windows版，个人使用除外</p>
+<h2 id="Redis常用操作"><a href="#Redis常用操作" class="headerlink" title="Redis常用操作"></a>Redis常用操作</h2><h3 id="Redis五大数据类型"><a href="#Redis五大数据类型" class="headerlink" title="Redis五大数据类型"></a>Redis五大数据类型</h3><p>Redis五种数据类型：string、hash、list、set、zset</p>
+<h3 id="公用命令"><a href="#公用命令" class="headerlink" title="公用命令"></a>公用命令</h3><blockquote>
+<p>DEL key<br>DUMP key：序列化给定key，返回被序列化的值<br>EXISTS key：检查key是否存在<br>EXPIRE key second：为key设定过期时间<br>TTL key：返回key剩余时间<br>PERSIST key：移除key的过期时间，key将持久保存<br>KEY pattern：查询所有符号给定模式的key<br>RANDOM key：随机返回一个key<br>RANAME key newkey：修改key的名称<br>MOVE key db：移动key至指定数据库中<br>TYPE key：返回key所储存的值的类型</p>
+</blockquote>
+<h3 id="string-字符串"><a href="#string-字符串" class="headerlink" title="string(字符串)"></a>string(字符串)</h3><blockquote>
+<p>string 是 redis 最基本的类型，你可以理解成与 Memcached 一模一样的类型，一个 key 对应一个 value。<br>string 类型是二进制安全的。意思是 redis 的 string 可以包含任何数据。比如jpg图片或者序列化的对象。<br>string 类型是 Redis 最基本的数据类型，string 类型的值最大能存储 512MB。</p>
+</blockquote>
+<h4 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h4><blockquote>
+<p>setkey_name value：命令不区分大小写，但是key_name区分大小写<br>SETNX key value：当key不存在时设置key的值。（SET if Not eXists）<br>get key_name<br>GETRANGE key start end：获取key中字符串的子字符串，从start开始，end结束<br>MGET key1 [key2 …]：获取多个key<br>GETSET KEY_NAME VALUE：设定key的值，并返回key的旧值。当key不存在，返回nil<br>STRLEN key：返回key所存储的字符串的长度<br>INCR KEY_NAME ：INCR命令key中存储的值+1,如果不存在key，则key中的值话先被初始化为0再加1<br>INCRBY KEY_NAME 增量<br>DECR KEY_NAME：key中的值自减一<br>DECRBY KEY_NAME<br>append key_name value：字符串拼接，追加至末尾，如果不存在，为其赋值</p>
+</blockquote>
+<h3 id="hash（哈希）"><a href="#hash（哈希）" class="headerlink" title="hash（哈希）"></a>hash（哈希）</h3><p>Redis hash 是一个键值(key=&gt;value)对集合。</p>
+<p>Redis hash 是一个 string 类型的 field 和 value 的映射表，hash 特别适合用于存储对象。</p>
+<h4 id="常用命令-1"><a href="#常用命令-1" class="headerlink" title="常用命令"></a>常用命令</h4><blockquote>
+<p>HSET key_name field value：为指定的key设定field和value<br>hmset key field value[field1,value1]<br>hget key field<br>hmget key field[field1]<br>hgetall key：返回hash表中所有字段和值<br>hkeys key：获取hash表所有字段<br>hlen key：获取hash表中的字段数量<br>-hdel key field [field1]：删除一个或多个hash表的字段</p>
+</blockquote>
+<h3 id="list（列表）"><a href="#list（列表）" class="headerlink" title="list（列表）"></a>list（列表）</h3><p>Redis 列表是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边）。</p>
+<h4 id="常用命令-2"><a href="#常用命令-2" class="headerlink" title="常用命令"></a>常用命令</h4><blockquote>
+<p>lpush key value1 [value2]<br>rpush key value1 [value2]<br>lpushx key value：从左侧插入值，如果list不存在，则不操作<br>rpushx key value：从右侧插入值，如果list不存在，则不操作<br>llen key：获取列表长度<br>lindex key index：获取指定索引的元素<br>lrange key start stop：获取列表指定范围的元素<br>lpop key ：从左侧移除第一个元素<br>prop key：移除列表最后一个元素<br>blpop key [key1] timeout：移除并获取列表第一个元素，如果列表没有元素会阻塞列表到等待超时或发现可弹出元素为止<br>brpop key [key1] timeout：移除并获取列表最后一个元素，如果列表没有元素会阻塞列表到等待超时或发现可弹出元素为止<br>ltrim key start stop ：对列表进行修改，让列表只保留指定区间的元素，不在指定区间的元素就会被删除<br>lset key index value ：指定索引的值<br>linsert key before|after world value：在列表元素前或则后插入元素</p>
+</blockquote>
+<h3 id="Set（集合）"><a href="#Set（集合）" class="headerlink" title="Set（集合）"></a>Set（集合）</h3><p>Redis的Set是string类型的无序集合。<br>集合是通过哈希表实现的，所以添加，删除，查找的复杂度都是O(1)。</p>
+<h4 id="常用命令-3"><a href="#常用命令-3" class="headerlink" title="常用命令"></a>常用命令</h4><blockquote>
+<p>sadd key value1[value2]：向集合添加成员<br>scard key：返回集合成员数<br>smembers key：返回集合中所有成员<br>sismember key member：判断memeber元素是否是集合key成员的成员<br>srandmember key [count]：返回集合中一个或多个随机数<br>srem key member1 [member2]：移除集合中一个或多个成员<br>spop key：移除并返回集合中的一个随机元素<br>smove source destination member：将member元素从source集合移动到destination集合<br>sdiff key1 [key2]：返回所有集合的差集<br>sdiffstore destination key1[key2]：返回给定所有集合的差集并存储在destination中</p>
+</blockquote>
+<h3 id="zset-sorted-set：有序集合"><a href="#zset-sorted-set：有序集合" class="headerlink" title="zset(sorted set：有序集合)"></a>zset(sorted set：有序集合)</h3><p>Redis zset 和 set 一样也是string类型元素的集合,且不允许重复的成员。<br>不同的是每个元素都会关联一个double类型的分数。redis正是通过分数来为集合中的成员进行从小到大的排序。<br>zset的成员是唯一的,但分数(score)却可以重复。</p>
+<h4 id="常用命令-4"><a href="#常用命令-4" class="headerlink" title="常用命令"></a>常用命令</h4><blockquote>
+<p>ZADD key score1 memeber1<br>ZCARD key ：获取集合中的元素数量<br>ZCOUNT key min max 计算在有序集合中指定区间分数的成员数<br>ZCOUNT key min max 计算在有序集合中指定区间分数的成员数<br>ZRANK key member：返回有序集合指定成员的索引<br>ZREVRANGE key start stop ：返回有序集中指定区间内的成员，通过索引，分数从高到底<br>ZREM key member [member …] 移除有序集合中的一个或多个成员<br>ZREMRANGEBYRANK key start stop 移除有序集合中给定的排名区间的所有成员(第一名是0)(低到高排序）<br>ZREMRANGEBYSCORE key min max 移除有序集合中给定的分数区间的所有成员</p>
+</blockquote>
+<h3 id="Redis持久化"><a href="#Redis持久化" class="headerlink" title="Redis持久化"></a>Redis持久化</h3><p>Redis支持RDB和AOF两种持久化机制，持久化功能有效地避免因进程退出造成的数据丢失问题，当下次重启时利用之前持久化的文件即可实现数 据恢复。</p>
+<h4 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h4><p>RDB持久化是把当前进程数据生成快照保存到硬盘的过程，触发RDB持久化过程分为手动触发和自动触发</p>
+<h5 id="手动触发"><a href="#手动触发" class="headerlink" title="手动触发"></a>手动触发</h5><p>手动触发分别对应save和bgsave命令</p>
+<p>save命令：阻塞当前Redis服务器，直到RDB过程完成为止，对于内存 比较大的实例会造成长时间阻塞，线上环境不建议使用</p>
+<p>bgsave命令：Redis进程执行fork操作创建子进程，RDB持久化过程由子 进程负责，完成后自动结束。阻塞只发生在fork阶段，一般时间很短</p>
+<h5 id="自动触发"><a href="#自动触发" class="headerlink" title="自动触发"></a>自动触发</h5><p>使用save相关配置，如“save m n”。表示m秒内数据集存在n次修改 时，自动触发bgsave。</p>
+<p>如果从节点执行全量复制操作，主节点自动执行bgsave生成RDB文件并发送给从节点，更多细节见6.3节介绍的复制原理。<br>执行debug reload命令重新加载Redis时，也会自动触发save操作。</p>
+<p>默认情况下执行shutdown命令时，如果没有开启AOF持久化功能则 自动执行bgsave。</p>
+<p>bgsave是主流的触发RDB持久化方式</p>
+<h5 id="RDB优缺点"><a href="#RDB优缺点" class="headerlink" title="RDB优缺点"></a>RDB优缺点</h5><h6 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h6><p>RDB是一个紧凑压缩的二进制文件，代表Redis在某个时间点上的数据 快照。非常适用于备份，全量复制等场景。比如每6小时执行bgsave备份， 并把RDB文件拷贝到远程机器或者文件系统中（如hdfs），用于灾难恢复。</p>
+<p>Redis加载RDB恢复数据远远快于AOF的方式。</p>
+<h6 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h6><p>RDB方式数据没办法做到实时持久化/秒级持久化。因为bgsave每次运 行都要执行fork操作创建子进程，属于重量级操作，频繁执行成本过高。</p>
+<p>RDB文件使用特定二进制格式保存，Redis版本演进过程中有多个格式 的RDB版本，存在老版本Redis服务无法兼容新版RDB格式的问题。</p>
+<p>针对RDB不适合实时持久化的问题，Redis提供了AOF持久化方式来解决。</p>
+<h4 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h4><p>AOF（append only file）持久化：以独立日志的方式记录每次写命令， 重启时再重新执行AOF文件中的命令达到恢复数据的目的。AOF的主要作用 是解决了数据持久化的实时性，目前已经是Redis持久化的主流方式</p>
+<h5 id="使用AOF"><a href="#使用AOF" class="headerlink" title="使用AOF"></a>使用AOF</h5><p>1.打开 redis.conf 文件，找到 APPEND ONLY MODE 对应内容，默认是关闭的，需要打开</p>
+<blockquote>
+<p>appendonly yes</p>
+</blockquote>
+<p>2.指定本地数据库文件名，默认值为 appendonly.aof</p>
+<blockquote>
+<p>appendfilename “appendonly.aof”</p>
+</blockquote>
+<p>3.指定更新日志条件</p>
+<blockquote>
+<p> #&nbsp;appendfsync always<br> appendfsync everysec<br> #&nbsp;appendfsync no</p>
+</blockquote>
+<p>always：同步持久化，每次发生数据变化会立刻写入到磁盘中。性能较差当数据完整性比较好（慢，安全）<br>everysec：出厂默认推荐，每秒异步记录一次（默认值）<br>no：不同步</p>
+<p>4.配置重写触发机制</p>
+<blockquote>
+<p>auto-aof-rewrite-percentage 100<br>auto-aof-rewrite-min-size 64mb</p>
+</blockquote>
+<p>当AOF文件大小是上次rewrite后大小的一倍且文件大于64M时触发。</p>
+<h5 id="AOF优缺点"><a href="#AOF优缺点" class="headerlink" title="AOF优缺点"></a>AOF优缺点</h5><h6 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h6><p>AOF可以更好的保护数据不丢失。</p>
+<p>AOF日志文件以append-only模式写入，写入性能比较高。</p>
+<p>AOF日志文件即使过大的时候，出现后台重写操作，也不会影响客户端的读写。</p>
+<p>适合做灾难性的误删除紧急恢复。</p>
+<h6 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h6><p>对于同一份数据来说，AOF日志文件通常比RDB数据快照文件更大，恢复速度慢。</p>
+<p>AOF开启后，支持的写QPS会比RDB支持的写QPS低，因为AOF一般会配置成每秒fsync一次日志文件，当然，每秒一次fsync，性能也还是很高的。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>1、不要仅仅使用RDB，因为那样会导致你丢失很多数据。</p>
+<p>2、也不要仅仅使用AOF，因为那样有两个问题：<br>你通过AOF做冷备，没有RDB做冷备，恢复速度更快，<br>第二，RDB每次简单粗暴生成数据快照，更加健壮，可以避免AOF这种复杂的备份和恢复机制的bug。</p>
+<p>3、综合使用AOF和RDB两种持久化机制，用AOF来保证数据不丢失，作为数据恢复的第一选择，<br>用RDB来做不同程度的冷备，在AOF文件都丢失或损坏不可用的时候，还可以使用RDB来进行快速的数据恢复。</p>
+<h3 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h3><p>可以一次执行多个命令，本质是一组命令的集合，一个事务中的所有命令都会序列化，按顺序地串行化执行而不会被其他命令插入，不许加塞</p>
+<h4 id="事务常用命令"><a href="#事务常用命令" class="headerlink" title="事务常用命令"></a>事务常用命令</h4><blockquote>
+<p>1.DISCARD：取消事务，放弃执行事务块内的所有命令<br>2.EXEC：执行所有事务块内的命令<br>3.MULTI：标记一个事务块的开始<br>4.UNWATCH：取消WATCH命令对所有key的监视<br>5.WATCH key [key…]：监视一个或多个key，如果在事务执行之前这个(些)key被其他命令所改动，那么事务被打断</p>
+</blockquote>
+<h4 id="WATCH"><a href="#WATCH" class="headerlink" title="WATCH"></a>WATCH</h4><p>Watch指令，类似乐观锁，事务提交时，如果key的值已被别的客户端改变，比如某个list已被别的客户端push/pop过了，整个事务队列都不会执行</p>
+<p>通过watch命令在事务执行之前监控了多个key，倘若在watch之后有任何key的值发生了变化，EXEC命令执行的事务都将被放弃，同时返回Nullmulti-bulk应答以通知调用者事务执行失败</p>
+<h4 id="事务的错误处理"><a href="#事务的错误处理" class="headerlink" title="事务的错误处理"></a>事务的错误处理</h4><p>1.如果队列中有命令输入错了，则整个队列都不会执行成功<br>2.如果队列中指令没有错，在执行过程中，指令执行失败，则只有当前指令失败，其它还是会成功</p>
+<h4 id="事务的三个阶段"><a href="#事务的三个阶段" class="headerlink" title="事务的三个阶段"></a>事务的三个阶段</h4><p>1.开启事务<br><img src="https://img-blog.csdnimg.cn/20200302112454142.png" alt="在这里插入图片描述"><br>2.加入队列<br><img src="https://img-blog.csdnimg.cn/20200302112541502.png" alt="在这里插入图片描述"><br>3.执行事务<br><img src="https://img-blog.csdnimg.cn/20200302112622566.png" alt="在这里插入图片描述"></p>
+<h4 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h4><p>1.单独的隔离操作：事务中的所有命令都会序列化，按顺序的执行。事务在执行的过程中，不会被其他客户端发送来的命令请求所打断。<br>2.没有隔离级别的概念：队列中的命令没有提交之前都不会实际的被执行，因为事务提交前任何指令都不会被实际执行，也就不存在“事务内的查询要看到事务里的更新，在事务外查询不能看到”这个问题。<br>3.不保证原子性：redis同一个事务中如果有一条命令执行失败，其后的命令仍然会被执行，没有回滚。</p>
+<h3 id="Redis消息发布订阅"><a href="#Redis消息发布订阅" class="headerlink" title="Redis消息发布订阅"></a>Redis消息发布订阅</h3><h4 id="发布订阅"><a href="#发布订阅" class="headerlink" title="发布订阅"></a>发布订阅</h4><p>Redis 发布订阅(pub/sub)是一种消息通信模式：发送者(pub)发送消息，订阅者(sub)接收消息。</p>
+<p>Redis 客户端可以订阅任意数量的频道。</p>
+<p>下图展示了频道 channel1 ， 以及订阅这个频道的三个客户端 —— client2 、 client5 和 client1 之间的关系：<br><img src="https://img-blog.csdnimg.cn/20200302112942900.png" alt="在这里插入图片描述"><br>当有新消息通过 PUBLISH 命令发送给频道 channel1 时， 这个消息就会被发送给订阅它的三个客户端：<br><img src="https://img-blog.csdnimg.cn/20200302112955404.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="常用命令-5"><a href="#常用命令-5" class="headerlink" title="常用命令"></a>常用命令</h4><blockquote>
+<p>subscribe channel [channel…]：订阅一个或多个频道的信息<br>psubscribe pattern [pattern…]：订阅一个或多个符合规定模式的频道<br>publish channel message ：将信息发送到指定频道<br>unsubscribe [channel[channel…]]：退订频道<br>punsubscribe [pattern[pattern…]]：退订所有给定模式的频道</p>
+</blockquote>
+<h3 id="Redis主从复制"><a href="#Redis主从复制" class="headerlink" title="Redis主从复制"></a>Redis主从复制</h3><p>主从复制，是指将一台Redis服务器的数据，复制到其他的Redis服务器。前者称为主节点(master/leader)，后者称为从节点(slave/follower)；数据的复制是单向的，只能由主节点到从节点。</p>
+<p>默认情况下，每台Redis服务器都是主节点；且一个主节点可以有多个从节点(或没有从节点)，但一个从节点只能有一个主节点。</p>
+<h4 id="主从复制的作用"><a href="#主从复制的作用" class="headerlink" title="主从复制的作用"></a>主从复制的作用</h4><blockquote>
+<p>数据冗余：主从复制实现了数据的热备份，是持久化之外的一种数据冗余方式。<br>故障恢复：当主节点出现问题时，可以由从节点提供服务，实现快速的故障恢复；实际上是一种服务的冗余。<br>负载均衡：在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务（即写Redis数据时应用连接主节点，读Redis数据时应用连接从节点），分担服务器负载；尤其是在写少读多的场景下，通过多个从节点分担读负载，可以大大提高Redis服务器的并发量。<br>高可用基石：除了上述作用以外，主从复制还是哨兵和集群能够实施的基础，因此说主从复制是Redis高可用的基础。</p>
+</blockquote>
+<h4 id="一主二从"><a href="#一主二从" class="headerlink" title="一主二从"></a>一主二从</h4><p>一主二从指有一个主节点(master/leader)和两个从节点(slave/follower)</p>
+<h5 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h5><p>开启三个redis镜像，外网访问端口分别是79,80,81</p>
+<p>端口为79</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run <span class="literal">-p</span> <span class="number">6379</span>:<span class="number">6379</span> <span class="literal">-v</span> /usr/local/docker/redis/redis.conf:/etc/redis/redis.conf <span class="literal">-v</span> /usr/local/docker/redis/<span class="keyword">data</span>:/<span class="keyword">data</span> -<span class="literal">-name</span> myredis79 <span class="literal">-d</span> redis</span><br></pre></td></tr></table></figure>
+<p>端口为80</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run <span class="literal">-p</span> <span class="number">6380</span>:<span class="number">6379</span> <span class="literal">-v</span> /usr/local/docker/redis/redis.conf:/etc/redis/redis.conf <span class="literal">-v</span> /usr/local/docker/redis/<span class="keyword">data</span>:/<span class="keyword">data</span> -<span class="literal">-name</span> myredis80 <span class="literal">-d</span> redis</span><br></pre></td></tr></table></figure>
+<p>端口为81</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run <span class="literal">-p</span> <span class="number">6381</span>:<span class="number">6379</span> <span class="literal">-v</span> /usr/local/docker/redis/redis.conf:/etc/redis/redis.conf <span class="literal">-v</span> /usr/local/docker/redis/<span class="keyword">data</span>:/<span class="keyword">data</span> -<span class="literal">-name</span> myredis81 <span class="literal">-d</span> redis</span><br></pre></td></tr></table></figure>
+<p>创建完成<br><img src="https://img-blog.csdnimg.cn/20200302114033147.png" alt="在这里插入图片描述"></p>
+<p>设置端口为79的为主节点(master/leader)</p>
+<p>需要先看79端口的ip地址可以用docker命令查看</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect 镜像ID</span><br></pre></td></tr></table></figure>
+
+<p>分别进入三个镜像</p>
+<p>首先查看79端口的信息，用info replication查看当前79端口信息<br><img src="https://img-blog.csdnimg.cn/20200302114854194.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">info replication</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20200302114539922.png" alt="在这里插入图片描述"><br>默认显示79端口为主节点，没有从节点</p>
+<p>80和81端口也是一样的</p>
+<p>在将80和81端口设置为79端口的从节点，命令：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SLAVEOF IP地址 端口号</span><br></pre></td></tr></table></figure>
+<p>IP地址是刚才查看的79端口的ip地址：172.X.X.X<br>端口号是redis的外网查看端口号：6379<br><img src="https://img-blog.csdnimg.cn/20200302115117540.png" alt="在这里插入图片描述"><br>这样显示则显示连接成功，再去查看79端口信息<br><img src="https://img-blog.csdnimg.cn/2020030211522436.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>80端口和81端口<br><img src="https://img-blog.csdnimg.cn/20200302115343346.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>显示如下，则代表，一主二从配置成功</p>
+<h4 id="薪火相传"><a href="#薪火相传" class="headerlink" title="薪火相传"></a>薪火相传</h4><p>上一个slave可以是下一个slave的Master，slave同样可以接收其他slaves的连接和同步请求，那么该slave作为了链条中下一个的master, 可以有效减轻master的写压力,去中心化降低风险。</p>
+<h5 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h5><p>79和80端口不变</p>
+<p>81端口连接80端口</p>
+<p>80端口显示如下<br><img src="https://img-blog.csdnimg.cn/20200302120055217.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>显示自己还是从机，但自己算主机，79的从机，81的主机，这样减少了79的压力，但却添加了风险更大，如果80从机挂掉，则81也接受不到消息</p>
+<h4 id="反客为主"><a href="#反客为主" class="headerlink" title="反客为主"></a>反客为主</h4><p>将从机升成主机</p>
+<h5 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h5><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SLAVEOF no one</span><br></pre></td></tr></table></figure>
+
+<h5 id="配置-2"><a href="#配置-2" class="headerlink" title="配置"></a>配置</h5><p>假如79主机挂了，则正常情况，80和81都不会有所行动，这时需要挑选一个主机出来，控制从机。<br><img src="https://img-blog.csdnimg.cn/2020030212055249.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>这时，80端口就是主机了，79端口就算回来也不再是它们的主机</p>
+<h4 id="哨兵模式"><a href="#哨兵模式" class="headerlink" title="哨兵模式"></a>哨兵模式</h4><p>反客为主的自动版，能够后台监控主机是否故障，如果故障了根据投票数自动将从库转换为主库</p>
+<h5 id="配置-3"><a href="#配置-3" class="headerlink" title="配置"></a>配置</h5><p>79,80,81端口下， 自定义的/myredis目录下新建sentinel.conf文件（名字绝不能错），配置哨兵,填写内容</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sentinel monitor ip地址 端口号 <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>上面最后一个数字1，表示主机挂掉后salve投票看让谁接替成为主机，得票数多少后成为主机</p>
+<h4 id="复制的缺点"><a href="#复制的缺点" class="headerlink" title="复制的缺点"></a>复制的缺点</h4><h5 id="复制延时"><a href="#复制延时" class="headerlink" title="复制延时"></a>复制延时</h5><p>因为读写分离，所有的写操作在主机上，传到从机上需要时间，当系统繁忙或者，访问量大的时候，延时时间将会更长，从机的数量越多，延时越严重</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechat.JPG" alt="故里 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.JPG" alt="故里 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/28/Docker%E7%9A%84%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/" rel="prev" title="Docker的安装以及使用">
+      <i class="fa fa-chevron-left"></i> Docker的安装以及使用
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis安装以及常用操作"><span class="nav-number">1.</span> <span class="nav-text">Redis安装以及常用操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis介绍"><span class="nav-number">1.1.</span> <span class="nav-text">Redis介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis安装"><span class="nav-number">1.2.</span> <span class="nav-text">Redis安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker版"><span class="nav-number">1.2.1.</span> <span class="nav-text">Docker版</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#安装"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置redis-conf"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">配置redis.conf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">运行</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux版"><span class="nav-number">1.2.2.</span> <span class="nav-text">Linux版</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Windows版"><span class="nav-number">1.2.3.</span> <span class="nav-text">Windows版</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis常用操作"><span class="nav-number">1.3.</span> <span class="nav-text">Redis常用操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis五大数据类型"><span class="nav-number">1.3.1.</span> <span class="nav-text">Redis五大数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#公用命令"><span class="nav-number">1.3.2.</span> <span class="nav-text">公用命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#string-字符串"><span class="nav-number">1.3.3.</span> <span class="nav-text">string(字符串)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">常用命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hash（哈希）"><span class="nav-number">1.3.4.</span> <span class="nav-text">hash（哈希）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令-1"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">常用命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#list（列表）"><span class="nav-number">1.3.5.</span> <span class="nav-text">list（列表）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令-2"><span class="nav-number">1.3.5.1.</span> <span class="nav-text">常用命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Set（集合）"><span class="nav-number">1.3.6.</span> <span class="nav-text">Set（集合）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令-3"><span class="nav-number">1.3.6.1.</span> <span class="nav-text">常用命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zset-sorted-set：有序集合"><span class="nav-number">1.3.7.</span> <span class="nav-text">zset(sorted set：有序集合)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令-4"><span class="nav-number">1.3.7.1.</span> <span class="nav-text">常用命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis持久化"><span class="nav-number">1.3.8.</span> <span class="nav-text">Redis持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RDB"><span class="nav-number">1.3.8.1.</span> <span class="nav-text">RDB</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#手动触发"><span class="nav-number">1.3.8.1.1.</span> <span class="nav-text">手动触发</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#自动触发"><span class="nav-number">1.3.8.1.2.</span> <span class="nav-text">自动触发</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RDB优缺点"><span class="nav-number">1.3.8.1.3.</span> <span class="nav-text">RDB优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#优点"><span class="nav-number">1.3.8.1.3.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#缺点"><span class="nav-number">1.3.8.1.3.2.</span> <span class="nav-text">缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AOF"><span class="nav-number">1.3.8.2.</span> <span class="nav-text">AOF</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#使用AOF"><span class="nav-number">1.3.8.2.1.</span> <span class="nav-text">使用AOF</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AOF优缺点"><span class="nav-number">1.3.8.2.2.</span> <span class="nav-text">AOF优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#优点-1"><span class="nav-number">1.3.8.2.2.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#缺点-1"><span class="nav-number">1.3.8.2.2.2.</span> <span class="nav-text">缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">1.3.8.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#事务"><span class="nav-number">1.3.9.</span> <span class="nav-text">事务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#事务常用命令"><span class="nav-number">1.3.9.1.</span> <span class="nav-text">事务常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#WATCH"><span class="nav-number">1.3.9.2.</span> <span class="nav-text">WATCH</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#事务的错误处理"><span class="nav-number">1.3.9.3.</span> <span class="nav-text">事务的错误处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#事务的三个阶段"><span class="nav-number">1.3.9.4.</span> <span class="nav-text">事务的三个阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#特性"><span class="nav-number">1.3.9.5.</span> <span class="nav-text">特性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis消息发布订阅"><span class="nav-number">1.3.10.</span> <span class="nav-text">Redis消息发布订阅</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#发布订阅"><span class="nav-number">1.3.10.1.</span> <span class="nav-text">发布订阅</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令-5"><span class="nav-number">1.3.10.2.</span> <span class="nav-text">常用命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis主从复制"><span class="nav-number">1.3.11.</span> <span class="nav-text">Redis主从复制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#主从复制的作用"><span class="nav-number">1.3.11.1.</span> <span class="nav-text">主从复制的作用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一主二从"><span class="nav-number">1.3.11.2.</span> <span class="nav-text">一主二从</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#配置"><span class="nav-number">1.3.11.2.1.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#薪火相传"><span class="nav-number">1.3.11.3.</span> <span class="nav-text">薪火相传</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#配置-1"><span class="nav-number">1.3.11.3.1.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反客为主"><span class="nav-number">1.3.11.4.</span> <span class="nav-text">反客为主</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#命令"><span class="nav-number">1.3.11.4.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#配置-2"><span class="nav-number">1.3.11.4.2.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#哨兵模式"><span class="nav-number">1.3.11.5.</span> <span class="nav-text">哨兵模式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#配置-3"><span class="nav-number">1.3.11.5.1.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#复制的缺点"><span class="nav-number">1.3.11.6.</span> <span class="nav-text">复制的缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#复制延时"><span class="nav-number">1.3.11.6.1.</span> <span class="nav-text">复制延时</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="故里"
+      src="/images/me.JPG">
+  <p class="site-author-name" itemprop="name">故里</p>
+  <div class="site-description" itemprop="description">惊鸿一瞥</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/victoria5710" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;victoria5710" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/5746214489" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;5746214489" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+     <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+
+
+
+
+
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">故里</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='1' zIndex='-1' count='99' src="true"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'afKYozX2ovA4hiAV7BK2UqY0-gzGzoHsz',
+      appKey     : '9YSJoUReTxTJimmWHdomX4Wl',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+</body>
+</html>

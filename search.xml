@@ -1,6 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Redis安装以及常用操作</title>
+    <url>/2020/03/02/Redis%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<h1 id="Redis安装以及常用操作"><a href="#Redis安装以及常用操作" class="headerlink" title="Redis安装以及常用操作"></a>Redis安装以及常用操作</h1><h2 id="Redis介绍"><a href="#Redis介绍" class="headerlink" title="Redis介绍"></a>Redis介绍</h2><p>Redis是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。</p>
+<a id="more"></a>
+
+<h2 id="Redis安装"><a href="#Redis安装" class="headerlink" title="Redis安装"></a>Redis安装</h2><h3 id="Docker版"><a href="#Docker版" class="headerlink" title="Docker版"></a>Docker版</h3><h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker pull redis</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置redis-conf"><a href="#配置redis-conf" class="headerlink" title="配置redis.conf"></a>配置redis.conf</h4><p>进入或者创建 /usr/local/docker/redis 目录下创建redis.conf</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">cd /usr/local/docker/redis</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">vim /usr/local/docker/redis/redis.conf</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>daemonize ： 默认为no，修改为yes启用守护线程<br>port ：设定端口号，默认为6379<br>bind ：绑定IP地址<br>databases ：数据库数量，默认16<br>save <second> <changes> ：指定多少时间、有多少次更新操作，就将数据同步到数据文件<br>#redis默认配置有三个条件，满足一个即进行持久化<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    save 900 1 #900s有1个更改<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        save 300 10 #300s有10个更改<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        save 60 10000 #60s有10000更改<br>dbfilename ：指定本地数据库的文件名，默认为dump.rdb<br>dir ：指定本地数据库的存放目录，默认为./当前文件夹<br>requirepass ：设置密码，默认关闭<br>redis -cli -h host -p port -a password</p>
+</blockquote>
+<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><p>启动redis服务</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker run <span class="literal">-p</span> <span class="number">6379</span>:<span class="number">6379</span> <span class="literal">-v</span> /usr/local/docker/redis/redis.conf:/etc/redis/redis.conf <span class="literal">-v</span> /usr/local/docker/redis/<span class="keyword">data</span>:/<span class="keyword">data</span> -<span class="literal">-name</span> myredis <span class="literal">-d</span> redis</span><br></pre></td></tr></table></figure>
+
+<p>进入redis</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker exec <span class="literal">-it</span> redisID /bin/bash</span><br></pre></td></tr></table></figure>
+<p>运行redis</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">redis<span class="literal">-cli</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Linux版"><a href="#Linux版" class="headerlink" title="Linux版"></a>Linux版</h3><p>后期更新</p>
+<h3 id="Windows版"><a href="#Windows版" class="headerlink" title="Windows版"></a>Windows版</h3><p>后期更新，不推荐使用windows版，个人使用除外</p>
+<h2 id="Redis常用操作"><a href="#Redis常用操作" class="headerlink" title="Redis常用操作"></a>Redis常用操作</h2><h3 id="Redis五大数据类型"><a href="#Redis五大数据类型" class="headerlink" title="Redis五大数据类型"></a>Redis五大数据类型</h3><p>Redis五种数据类型：string、hash、list、set、zset</p>
+<h3 id="公用命令"><a href="#公用命令" class="headerlink" title="公用命令"></a>公用命令</h3><blockquote>
+<p>DEL key<br>DUMP key：序列化给定key，返回被序列化的值<br>EXISTS key：检查key是否存在<br>EXPIRE key second：为key设定过期时间<br>TTL key：返回key剩余时间<br>PERSIST key：移除key的过期时间，key将持久保存<br>KEY pattern：查询所有符号给定模式的key<br>RANDOM key：随机返回一个key<br>RANAME key newkey：修改key的名称<br>MOVE key db：移动key至指定数据库中<br>TYPE key：返回key所储存的值的类型</p>
+</blockquote>
+<h3 id="string-字符串"><a href="#string-字符串" class="headerlink" title="string(字符串)"></a>string(字符串)</h3><blockquote>
+<p>string 是 redis 最基本的类型，你可以理解成与 Memcached 一模一样的类型，一个 key 对应一个 value。<br>string 类型是二进制安全的。意思是 redis 的 string 可以包含任何数据。比如jpg图片或者序列化的对象。<br>string 类型是 Redis 最基本的数据类型，string 类型的值最大能存储 512MB。</p>
+</blockquote>
+<h4 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h4><blockquote>
+<p>setkey_name value：命令不区分大小写，但是key_name区分大小写<br>SETNX key value：当key不存在时设置key的值。（SET if Not eXists）<br>get key_name<br>GETRANGE key start end：获取key中字符串的子字符串，从start开始，end结束<br>MGET key1 [key2 …]：获取多个key<br>GETSET KEY_NAME VALUE：设定key的值，并返回key的旧值。当key不存在，返回nil<br>STRLEN key：返回key所存储的字符串的长度<br>INCR KEY_NAME ：INCR命令key中存储的值+1,如果不存在key，则key中的值话先被初始化为0再加1<br>INCRBY KEY_NAME 增量<br>DECR KEY_NAME：key中的值自减一<br>DECRBY KEY_NAME<br>append key_name value：字符串拼接，追加至末尾，如果不存在，为其赋值</p>
+</blockquote>
+<h3 id="hash（哈希）"><a href="#hash（哈希）" class="headerlink" title="hash（哈希）"></a>hash（哈希）</h3><p>Redis hash 是一个键值(key=&gt;value)对集合。</p>
+<p>Redis hash 是一个 string 类型的 field 和 value 的映射表，hash 特别适合用于存储对象。</p>
+<h4 id="常用命令-1"><a href="#常用命令-1" class="headerlink" title="常用命令"></a>常用命令</h4><blockquote>
+<p>HSET key_name field value：为指定的key设定field和value<br>hmset key field value[field1,value1]<br>hget key field<br>hmget key field[field1]<br>hgetall key：返回hash表中所有字段和值<br>hkeys key：获取hash表所有字段<br>hlen key：获取hash表中的字段数量<br>-hdel key field [field1]：删除一个或多个hash表的字段</p>
+</blockquote>
+<h3 id="list（列表）"><a href="#list（列表）" class="headerlink" title="list（列表）"></a>list（列表）</h3><p>Redis 列表是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边）。</p>
+<h4 id="常用命令-2"><a href="#常用命令-2" class="headerlink" title="常用命令"></a>常用命令</h4><blockquote>
+<p>lpush key value1 [value2]<br>rpush key value1 [value2]<br>lpushx key value：从左侧插入值，如果list不存在，则不操作<br>rpushx key value：从右侧插入值，如果list不存在，则不操作<br>llen key：获取列表长度<br>lindex key index：获取指定索引的元素<br>lrange key start stop：获取列表指定范围的元素<br>lpop key ：从左侧移除第一个元素<br>prop key：移除列表最后一个元素<br>blpop key [key1] timeout：移除并获取列表第一个元素，如果列表没有元素会阻塞列表到等待超时或发现可弹出元素为止<br>brpop key [key1] timeout：移除并获取列表最后一个元素，如果列表没有元素会阻塞列表到等待超时或发现可弹出元素为止<br>ltrim key start stop ：对列表进行修改，让列表只保留指定区间的元素，不在指定区间的元素就会被删除<br>lset key index value ：指定索引的值<br>linsert key before|after world value：在列表元素前或则后插入元素</p>
+</blockquote>
+<h3 id="Set（集合）"><a href="#Set（集合）" class="headerlink" title="Set（集合）"></a>Set（集合）</h3><p>Redis的Set是string类型的无序集合。<br>集合是通过哈希表实现的，所以添加，删除，查找的复杂度都是O(1)。</p>
+<h4 id="常用命令-3"><a href="#常用命令-3" class="headerlink" title="常用命令"></a>常用命令</h4><blockquote>
+<p>sadd key value1[value2]：向集合添加成员<br>scard key：返回集合成员数<br>smembers key：返回集合中所有成员<br>sismember key member：判断memeber元素是否是集合key成员的成员<br>srandmember key [count]：返回集合中一个或多个随机数<br>srem key member1 [member2]：移除集合中一个或多个成员<br>spop key：移除并返回集合中的一个随机元素<br>smove source destination member：将member元素从source集合移动到destination集合<br>sdiff key1 [key2]：返回所有集合的差集<br>sdiffstore destination key1[key2]：返回给定所有集合的差集并存储在destination中</p>
+</blockquote>
+<h3 id="zset-sorted-set：有序集合"><a href="#zset-sorted-set：有序集合" class="headerlink" title="zset(sorted set：有序集合)"></a>zset(sorted set：有序集合)</h3><p>Redis zset 和 set 一样也是string类型元素的集合,且不允许重复的成员。<br>不同的是每个元素都会关联一个double类型的分数。redis正是通过分数来为集合中的成员进行从小到大的排序。<br>zset的成员是唯一的,但分数(score)却可以重复。</p>
+<h4 id="常用命令-4"><a href="#常用命令-4" class="headerlink" title="常用命令"></a>常用命令</h4><blockquote>
+<p>ZADD key score1 memeber1<br>ZCARD key ：获取集合中的元素数量<br>ZCOUNT key min max 计算在有序集合中指定区间分数的成员数<br>ZCOUNT key min max 计算在有序集合中指定区间分数的成员数<br>ZRANK key member：返回有序集合指定成员的索引<br>ZREVRANGE key start stop ：返回有序集中指定区间内的成员，通过索引，分数从高到底<br>ZREM key member [member …] 移除有序集合中的一个或多个成员<br>ZREMRANGEBYRANK key start stop 移除有序集合中给定的排名区间的所有成员(第一名是0)(低到高排序）<br>ZREMRANGEBYSCORE key min max 移除有序集合中给定的分数区间的所有成员</p>
+</blockquote>
+<h3 id="Redis持久化"><a href="#Redis持久化" class="headerlink" title="Redis持久化"></a>Redis持久化</h3><p>Redis支持RDB和AOF两种持久化机制，持久化功能有效地避免因进程退出造成的数据丢失问题，当下次重启时利用之前持久化的文件即可实现数 据恢复。</p>
+<h4 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h4><p>RDB持久化是把当前进程数据生成快照保存到硬盘的过程，触发RDB持久化过程分为手动触发和自动触发</p>
+<h5 id="手动触发"><a href="#手动触发" class="headerlink" title="手动触发"></a>手动触发</h5><p>手动触发分别对应save和bgsave命令</p>
+<p>save命令：阻塞当前Redis服务器，直到RDB过程完成为止，对于内存 比较大的实例会造成长时间阻塞，线上环境不建议使用</p>
+<p>bgsave命令：Redis进程执行fork操作创建子进程，RDB持久化过程由子 进程负责，完成后自动结束。阻塞只发生在fork阶段，一般时间很短</p>
+<h5 id="自动触发"><a href="#自动触发" class="headerlink" title="自动触发"></a>自动触发</h5><p>使用save相关配置，如“save m n”。表示m秒内数据集存在n次修改 时，自动触发bgsave。</p>
+<p>如果从节点执行全量复制操作，主节点自动执行bgsave生成RDB文件并发送给从节点，更多细节见6.3节介绍的复制原理。<br>执行debug reload命令重新加载Redis时，也会自动触发save操作。</p>
+<p>默认情况下执行shutdown命令时，如果没有开启AOF持久化功能则 自动执行bgsave。</p>
+<p>bgsave是主流的触发RDB持久化方式</p>
+<h5 id="RDB优缺点"><a href="#RDB优缺点" class="headerlink" title="RDB优缺点"></a>RDB优缺点</h5><h6 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h6><p>RDB是一个紧凑压缩的二进制文件，代表Redis在某个时间点上的数据 快照。非常适用于备份，全量复制等场景。比如每6小时执行bgsave备份， 并把RDB文件拷贝到远程机器或者文件系统中（如hdfs），用于灾难恢复。</p>
+<p>Redis加载RDB恢复数据远远快于AOF的方式。</p>
+<h6 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h6><p>RDB方式数据没办法做到实时持久化/秒级持久化。因为bgsave每次运 行都要执行fork操作创建子进程，属于重量级操作，频繁执行成本过高。</p>
+<p>RDB文件使用特定二进制格式保存，Redis版本演进过程中有多个格式 的RDB版本，存在老版本Redis服务无法兼容新版RDB格式的问题。</p>
+<p>针对RDB不适合实时持久化的问题，Redis提供了AOF持久化方式来解决。</p>
+<h4 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h4><p>AOF（append only file）持久化：以独立日志的方式记录每次写命令， 重启时再重新执行AOF文件中的命令达到恢复数据的目的。AOF的主要作用 是解决了数据持久化的实时性，目前已经是Redis持久化的主流方式</p>
+<h5 id="使用AOF"><a href="#使用AOF" class="headerlink" title="使用AOF"></a>使用AOF</h5><p>1.打开 redis.conf 文件，找到 APPEND ONLY MODE 对应内容，默认是关闭的，需要打开</p>
+<blockquote>
+<p>appendonly yes</p>
+</blockquote>
+<p>2.指定本地数据库文件名，默认值为 appendonly.aof</p>
+<blockquote>
+<p>appendfilename “appendonly.aof”</p>
+</blockquote>
+<p>3.指定更新日志条件</p>
+<blockquote>
+<p> #&nbsp;appendfsync always<br> appendfsync everysec<br> #&nbsp;appendfsync no</p>
+</blockquote>
+<p>always：同步持久化，每次发生数据变化会立刻写入到磁盘中。性能较差当数据完整性比较好（慢，安全）<br>everysec：出厂默认推荐，每秒异步记录一次（默认值）<br>no：不同步</p>
+<p>4.配置重写触发机制</p>
+<blockquote>
+<p>auto-aof-rewrite-percentage 100<br>auto-aof-rewrite-min-size 64mb</p>
+</blockquote>
+<p>当AOF文件大小是上次rewrite后大小的一倍且文件大于64M时触发。</p>
+<h5 id="AOF优缺点"><a href="#AOF优缺点" class="headerlink" title="AOF优缺点"></a>AOF优缺点</h5><h6 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h6><p>AOF可以更好的保护数据不丢失。</p>
+<p>AOF日志文件以append-only模式写入，写入性能比较高。</p>
+<p>AOF日志文件即使过大的时候，出现后台重写操作，也不会影响客户端的读写。</p>
+<p>适合做灾难性的误删除紧急恢复。</p>
+<h6 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h6><p>对于同一份数据来说，AOF日志文件通常比RDB数据快照文件更大，恢复速度慢。</p>
+<p>AOF开启后，支持的写QPS会比RDB支持的写QPS低，因为AOF一般会配置成每秒fsync一次日志文件，当然，每秒一次fsync，性能也还是很高的。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>1、不要仅仅使用RDB，因为那样会导致你丢失很多数据。</p>
+<p>2、也不要仅仅使用AOF，因为那样有两个问题：<br>你通过AOF做冷备，没有RDB做冷备，恢复速度更快，<br>第二，RDB每次简单粗暴生成数据快照，更加健壮，可以避免AOF这种复杂的备份和恢复机制的bug。</p>
+<p>3、综合使用AOF和RDB两种持久化机制，用AOF来保证数据不丢失，作为数据恢复的第一选择，<br>用RDB来做不同程度的冷备，在AOF文件都丢失或损坏不可用的时候，还可以使用RDB来进行快速的数据恢复。</p>
+<h3 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h3><p>可以一次执行多个命令，本质是一组命令的集合，一个事务中的所有命令都会序列化，按顺序地串行化执行而不会被其他命令插入，不许加塞</p>
+<h4 id="事务常用命令"><a href="#事务常用命令" class="headerlink" title="事务常用命令"></a>事务常用命令</h4><blockquote>
+<p>1.DISCARD：取消事务，放弃执行事务块内的所有命令<br>2.EXEC：执行所有事务块内的命令<br>3.MULTI：标记一个事务块的开始<br>4.UNWATCH：取消WATCH命令对所有key的监视<br>5.WATCH key [key…]：监视一个或多个key，如果在事务执行之前这个(些)key被其他命令所改动，那么事务被打断</p>
+</blockquote>
+<h4 id="WATCH"><a href="#WATCH" class="headerlink" title="WATCH"></a>WATCH</h4><p>Watch指令，类似乐观锁，事务提交时，如果key的值已被别的客户端改变，比如某个list已被别的客户端push/pop过了，整个事务队列都不会执行</p>
+<p>通过watch命令在事务执行之前监控了多个key，倘若在watch之后有任何key的值发生了变化，EXEC命令执行的事务都将被放弃，同时返回Nullmulti-bulk应答以通知调用者事务执行失败</p>
+<h4 id="事务的错误处理"><a href="#事务的错误处理" class="headerlink" title="事务的错误处理"></a>事务的错误处理</h4><p>1.如果队列中有命令输入错了，则整个队列都不会执行成功<br>2.如果队列中指令没有错，在执行过程中，指令执行失败，则只有当前指令失败，其它还是会成功</p>
+<h4 id="事务的三个阶段"><a href="#事务的三个阶段" class="headerlink" title="事务的三个阶段"></a>事务的三个阶段</h4><p>1.开启事务<br><img src="https://img-blog.csdnimg.cn/20200302112454142.png" alt="在这里插入图片描述"><br>2.加入队列<br><img src="https://img-blog.csdnimg.cn/20200302112541502.png" alt="在这里插入图片描述"><br>3.执行事务<br><img src="https://img-blog.csdnimg.cn/20200302112622566.png" alt="在这里插入图片描述"></p>
+<h4 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h4><p>1.单独的隔离操作：事务中的所有命令都会序列化，按顺序的执行。事务在执行的过程中，不会被其他客户端发送来的命令请求所打断。<br>2.没有隔离级别的概念：队列中的命令没有提交之前都不会实际的被执行，因为事务提交前任何指令都不会被实际执行，也就不存在“事务内的查询要看到事务里的更新，在事务外查询不能看到”这个问题。<br>3.不保证原子性：redis同一个事务中如果有一条命令执行失败，其后的命令仍然会被执行，没有回滚。</p>
+<h3 id="Redis消息发布订阅"><a href="#Redis消息发布订阅" class="headerlink" title="Redis消息发布订阅"></a>Redis消息发布订阅</h3><h4 id="发布订阅"><a href="#发布订阅" class="headerlink" title="发布订阅"></a>发布订阅</h4><p>Redis 发布订阅(pub/sub)是一种消息通信模式：发送者(pub)发送消息，订阅者(sub)接收消息。</p>
+<p>Redis 客户端可以订阅任意数量的频道。</p>
+<p>下图展示了频道 channel1 ， 以及订阅这个频道的三个客户端 —— client2 、 client5 和 client1 之间的关系：<br><img src="https://img-blog.csdnimg.cn/20200302112942900.png" alt="在这里插入图片描述"><br>当有新消息通过 PUBLISH 命令发送给频道 channel1 时， 这个消息就会被发送给订阅它的三个客户端：<br><img src="https://img-blog.csdnimg.cn/20200302112955404.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="常用命令-5"><a href="#常用命令-5" class="headerlink" title="常用命令"></a>常用命令</h4><blockquote>
+<p>subscribe channel [channel…]：订阅一个或多个频道的信息<br>psubscribe pattern [pattern…]：订阅一个或多个符合规定模式的频道<br>publish channel message ：将信息发送到指定频道<br>unsubscribe [channel[channel…]]：退订频道<br>punsubscribe [pattern[pattern…]]：退订所有给定模式的频道</p>
+</blockquote>
+<h3 id="Redis主从复制"><a href="#Redis主从复制" class="headerlink" title="Redis主从复制"></a>Redis主从复制</h3><p>主从复制，是指将一台Redis服务器的数据，复制到其他的Redis服务器。前者称为主节点(master/leader)，后者称为从节点(slave/follower)；数据的复制是单向的，只能由主节点到从节点。</p>
+<p>默认情况下，每台Redis服务器都是主节点；且一个主节点可以有多个从节点(或没有从节点)，但一个从节点只能有一个主节点。</p>
+<h4 id="主从复制的作用"><a href="#主从复制的作用" class="headerlink" title="主从复制的作用"></a>主从复制的作用</h4><blockquote>
+<p>数据冗余：主从复制实现了数据的热备份，是持久化之外的一种数据冗余方式。<br>故障恢复：当主节点出现问题时，可以由从节点提供服务，实现快速的故障恢复；实际上是一种服务的冗余。<br>负载均衡：在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务（即写Redis数据时应用连接主节点，读Redis数据时应用连接从节点），分担服务器负载；尤其是在写少读多的场景下，通过多个从节点分担读负载，可以大大提高Redis服务器的并发量。<br>高可用基石：除了上述作用以外，主从复制还是哨兵和集群能够实施的基础，因此说主从复制是Redis高可用的基础。</p>
+</blockquote>
+<h4 id="一主二从"><a href="#一主二从" class="headerlink" title="一主二从"></a>一主二从</h4><p>一主二从指有一个主节点(master/leader)和两个从节点(slave/follower)</p>
+<h5 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h5><p>开启三个redis镜像，外网访问端口分别是79,80,81</p>
+<p>端口为79</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker run <span class="literal">-p</span> <span class="number">6379</span>:<span class="number">6379</span> <span class="literal">-v</span> /usr/local/docker/redis/redis.conf:/etc/redis/redis.conf <span class="literal">-v</span> /usr/local/docker/redis/<span class="keyword">data</span>:/<span class="keyword">data</span> -<span class="literal">-name</span> myredis79 <span class="literal">-d</span> redis</span><br></pre></td></tr></table></figure>
+<p>端口为80</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker run <span class="literal">-p</span> <span class="number">6380</span>:<span class="number">6379</span> <span class="literal">-v</span> /usr/local/docker/redis/redis.conf:/etc/redis/redis.conf <span class="literal">-v</span> /usr/local/docker/redis/<span class="keyword">data</span>:/<span class="keyword">data</span> -<span class="literal">-name</span> myredis80 <span class="literal">-d</span> redis</span><br></pre></td></tr></table></figure>
+<p>端口为81</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker run <span class="literal">-p</span> <span class="number">6381</span>:<span class="number">6379</span> <span class="literal">-v</span> /usr/local/docker/redis/redis.conf:/etc/redis/redis.conf <span class="literal">-v</span> /usr/local/docker/redis/<span class="keyword">data</span>:/<span class="keyword">data</span> -<span class="literal">-name</span> myredis81 <span class="literal">-d</span> redis</span><br></pre></td></tr></table></figure>
+<p>创建完成<br><img src="https://img-blog.csdnimg.cn/20200302114033147.png" alt="在这里插入图片描述"></p>
+<p>设置端口为79的为主节点(master/leader)</p>
+<p>需要先看79端口的ip地址可以用docker命令查看</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker inspect 镜像ID</span><br></pre></td></tr></table></figure>
+
+<p>分别进入三个镜像</p>
+<p>首先查看79端口的信息，用info replication查看当前79端口信息<br><img src="https://img-blog.csdnimg.cn/20200302114854194.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">info replication</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20200302114539922.png" alt="在这里插入图片描述"><br>默认显示79端口为主节点，没有从节点</p>
+<p>80和81端口也是一样的</p>
+<p>在将80和81端口设置为79端口的从节点，命令：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">SLAVEOF IP地址 端口号</span><br></pre></td></tr></table></figure>
+<p>IP地址是刚才查看的79端口的ip地址：172.X.X.X<br>端口号是redis的外网查看端口号：6379<br><img src="https://img-blog.csdnimg.cn/20200302115117540.png" alt="在这里插入图片描述"><br>这样显示则显示连接成功，再去查看79端口信息<br><img src="https://img-blog.csdnimg.cn/2020030211522436.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>80端口和81端口<br><img src="https://img-blog.csdnimg.cn/20200302115343346.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>显示如下，则代表，一主二从配置成功</p>
+<h4 id="薪火相传"><a href="#薪火相传" class="headerlink" title="薪火相传"></a>薪火相传</h4><p>上一个slave可以是下一个slave的Master，slave同样可以接收其他slaves的连接和同步请求，那么该slave作为了链条中下一个的master, 可以有效减轻master的写压力,去中心化降低风险。</p>
+<h5 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h5><p>79和80端口不变</p>
+<p>81端口连接80端口</p>
+<p>80端口显示如下<br><img src="https://img-blog.csdnimg.cn/20200302120055217.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>显示自己还是从机，但自己算主机，79的从机，81的主机，这样减少了79的压力，但却添加了风险更大，如果80从机挂掉，则81也接受不到消息</p>
+<h4 id="反客为主"><a href="#反客为主" class="headerlink" title="反客为主"></a>反客为主</h4><p>将从机升成主机</p>
+<h5 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h5><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">SLAVEOF no one</span><br></pre></td></tr></table></figure>
+
+<h5 id="配置-2"><a href="#配置-2" class="headerlink" title="配置"></a>配置</h5><p>假如79主机挂了，则正常情况，80和81都不会有所行动，这时需要挑选一个主机出来，控制从机。<br><img src="https://img-blog.csdnimg.cn/2020030212055249.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDA0ODc0Ng==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>这时，80端口就是主机了，79端口就算回来也不再是它们的主机</p>
+<h4 id="哨兵模式"><a href="#哨兵模式" class="headerlink" title="哨兵模式"></a>哨兵模式</h4><p>反客为主的自动版，能够后台监控主机是否故障，如果故障了根据投票数自动将从库转换为主库</p>
+<h5 id="配置-3"><a href="#配置-3" class="headerlink" title="配置"></a>配置</h5><p>79,80,81端口下， 自定义的/myredis目录下新建sentinel.conf文件（名字绝不能错），配置哨兵,填写内容</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">sentinel monitor ip地址 端口号 <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>上面最后一个数字1，表示主机挂掉后salve投票看让谁接替成为主机，得票数多少后成为主机</p>
+<h4 id="复制的缺点"><a href="#复制的缺点" class="headerlink" title="复制的缺点"></a>复制的缺点</h4><h5 id="复制延时"><a href="#复制延时" class="headerlink" title="复制延时"></a>复制延时</h5><p>因为读写分离，所有的写操作在主机上，传到从机上需要时间，当系统繁忙或者，访问量大的时候，延时时间将会更长，从机的数量越多，延时越严重</p>
+]]></content>
+      <categories>
+        <category>Redis</category>
+      </categories>
+      <tags>
+        <tag>Redis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker的安装以及使用</title>
     <url>/2020/02/28/Docker%E7%9A%84%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<h1 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h1><p>Docker 是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可移植的镜像中，然后发布到任何流行的 Linux或Windows 机器上，也可以实现虚拟化。容器是完全使用沙箱机制，相互之间不会有任何接口。</p>

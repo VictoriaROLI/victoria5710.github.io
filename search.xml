@@ -1,6 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Docker安装FastDFS</title>
+    <url>/2020/03/16/Docker%E5%AE%89%E8%A3%85FastDFS/</url>
+    <content><![CDATA[<h1 id="FastDFS"><a href="#FastDFS" class="headerlink" title="FastDFS"></a>FastDFS</h1><p>FastDFS是一个开源的轻量级分布式文件系统，它对文件进行管理，功能包括：文件存储、文件同步、文件访问（文件上传、文件下载）等，解决了大容量存储和负载均衡的问题。特别适合以文件为载体的在线服务，如相册网站、视频网站等等。</p>
+<a id="more"></a>
+
+<p>FastDFS为互联网量身定制，充分考虑了冗余备份、负载均衡、线性扩容等机制，并注重高可用、高性能等指标，使用FastDFS很容易搭建一套高性能的文件服务器集群提供文件上传、下载等服务。</p>
+<h2 id="安装FastDFS"><a href="#安装FastDFS" class="headerlink" title="安装FastDFS"></a>安装FastDFS</h2><h3 id="查看fastdfs的镜像"><a href="#查看fastdfs的镜像" class="headerlink" title="查看fastdfs的镜像"></a>查看fastdfs的镜像</h3><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker search fastdfs</span><br></pre></td></tr></table></figure>
+
+<h3 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h3><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker pull delron/fastdfs</span><br></pre></td></tr></table></figure>
+
+<h3 id="启动tracker服务"><a href="#启动tracker服务" class="headerlink" title="启动tracker服务"></a>启动tracker服务</h3><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker run <span class="literal">-d</span> -<span class="literal">-network</span>=host -<span class="literal">-name</span> tracker <span class="literal">-v</span> /usr/local/docker/fastDFS/tracker:/var/fdfs delron/fastdfs tracker</span><br></pre></td></tr></table></figure>
+
+<h3 id="启动storage服务"><a href="#启动storage服务" class="headerlink" title="启动storage服务"></a>启动storage服务</h3><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker run <span class="literal">-d</span> -<span class="literal">-network</span>=host -<span class="literal">-name</span> storage <span class="literal">-e</span> TRACKER_SERVER=<span class="number">39.97</span>.<span class="number">118.222</span>:<span class="number">22122</span> <span class="literal">-v</span> /usr/local/docker/fastDFS/storage:/var/fdfs <span class="literal">-e</span> GROUP_NAME=group1 delron/fastdfs storage</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="进入到storage容器中"><a href="#进入到storage容器中" class="headerlink" title="进入到storage容器中"></a>进入到storage容器中</h3><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker exec <span class="literal">-it</span> 容器ID bash</span><br></pre></td></tr></table></figure>
+
+<h3 id="默认端口"><a href="#默认端口" class="headerlink" title="默认端口"></a>默认端口</h3><p>fastdfs默认的端口有三个8888,23000,22122，分别解释一下8888是默认的nginx代理端口，23000是storage服务端口，22122是tracker服务端口。</p>
+<h3 id="修改storage端口（也可以不修改）"><a href="#修改storage端口（也可以不修改）" class="headerlink" title="修改storage端口（也可以不修改）"></a>修改storage端口（也可以不修改）</h3><p>这是修改nginx对外开放的端口号</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">vi /etc/fdfs/storage.conf</span><br></pre></td></tr></table></figure>
+<p>找到http.server_port = 8888修改为80</p>
+<h3 id="修改nginx端口"><a href="#修改nginx端口" class="headerlink" title="修改nginx端口"></a>修改nginx端口</h3><p>和上面步骤是配套的，必须同时修改</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">vi /usr/local/nginx/conf/nginx.conf</span><br></pre></td></tr></table></figure>
+<p>找到监听的端口改为80</p>
+<h3 id="重启storage服务"><a href="#重启storage服务" class="headerlink" title="重启storage服务"></a>重启storage服务</h3><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker restart 容器ID</span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <categories>
+        <category>FastDFS</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>FastDFS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker安装ElasticSearch</title>
+    <url>/2020/03/16/Docker%E5%AE%89%E8%A3%85ElasticSearch/</url>
+    <content><![CDATA[<h1 id="ElasticSearch"><a href="#ElasticSearch" class="headerlink" title="ElasticSearch"></a>ElasticSearch</h1><p>ElasticSearch是一个基于Lucene的搜索服务器。它提供了一个分布式多用户能力的全文搜索引擎，基于RESTful web接口。Elasticsearch是用Java语言开发的，并作为Apache许可条款下的开放源码发布，是一种流行的企业级搜索引擎。ElasticSearch用于云计算中，能够达到实时搜索，稳定，可靠，快速，安装使用方便。官方客户端在Java、.NET（C#）、PHP、Python、Apache Groovy、Ruby和许多其他语言中都是可用的。根据DB-Engines的排名显示，Elasticsearch是最受欢迎的企业搜索引擎，其次是Apache Solr，也是基于Lucene。</p>
+<a id="more"></a>
+
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="查找ElasticSearch镜像"><a href="#查找ElasticSearch镜像" class="headerlink" title="查找ElasticSearch镜像"></a>查找ElasticSearch镜像</h3><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker search elasticsearch</span><br></pre></td></tr></table></figure>
+
+<h3 id="拉取ElasticSearch镜像"><a href="#拉取ElasticSearch镜像" class="headerlink" title="拉取ElasticSearch镜像"></a>拉取ElasticSearch镜像</h3><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker pull elasticsearch</span><br></pre></td></tr></table></figure>
+
+<h3 id="运行ElasticSearch"><a href="#运行ElasticSearch" class="headerlink" title="运行ElasticSearch"></a>运行ElasticSearch</h3><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">docker run <span class="literal">-id</span> -<span class="literal">-name</span> esearch <span class="literal">-p</span> <span class="number">9200</span>:<span class="number">9200</span> <span class="literal">-p</span> <span class="number">9300</span>:<span class="number">9300</span> elasticsearch</span><br></pre></td></tr></table></figure>
+
+<h3 id="如果启动一会就关闭服务"><a href="#如果启动一会就关闭服务" class="headerlink" title="如果启动一会就关闭服务"></a>如果启动一会就关闭服务</h3><p>分配内存太小，需要将vm.max_map_count的值调大</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">sysctl <span class="literal">-w</span> vm.max_map_count=<span class="number">262144</span></span><br></pre></td></tr></table></figure>
+<p>查看vm.max_map_count命令：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">sysctl <span class="literal">-a</span>|grep vm.max_map_count</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看ElasticSearch的web服务运行情况"><a href="#查看ElasticSearch的web服务运行情况" class="headerlink" title="查看ElasticSearch的web服务运行情况"></a>查看ElasticSearch的web服务运行情况</h3><p>通过宿主机的IP访问  如： http://宿主机IP:9200/</p>
+]]></content>
+      <categories>
+        <category>ElasticSearch</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>ElasticSearch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SpringCloud学习</title>
     <url>/2020/03/07/SpringCloud%E5%AD%A6%E4%B9%A0/</url>
     <content><![CDATA[<h1 id="SpringCloud学习"><a href="#SpringCloud学习" class="headerlink" title="SpringCloud学习"></a>SpringCloud学习</h1><h2 id="微服务介绍"><a href="#微服务介绍" class="headerlink" title="微服务介绍"></a>微服务介绍</h2><p>微服务化的核心就是将传统的一站式应用，根据业务拆分成一个一一个的服务，彻底，<br>地去耦合每一个微服务提供单个业务功能的服务，一个服务做一-件事,<br>从技术角度看就是一种小而独立的处理过程，类似进程概能够自行单独启动<br>或销毁，拥有自己独立的数据库。</p>

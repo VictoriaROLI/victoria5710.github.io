@@ -1,6 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Spring Data Jpa自定义方法关键字</title>
+    <url>/2020/04/23/Spring-Data-Jpa%E8%87%AA%E5%AE%9A%E4%B9%89%E6%96%B9%E6%B3%95%E5%85%B3%E9%94%AE%E5%AD%97/</url>
+    <content><![CDATA[<h1 id="Spring-Data-Jpa自定义方法关键字"><a href="#Spring-Data-Jpa自定义方法关键字" class="headerlink" title="Spring Data Jpa自定义方法关键字"></a>Spring Data Jpa自定义方法关键字</h1><a id="more"></a>
+
+<table>
+<thead>
+<tr>
+<th>关键字</th>
+<th>方法名举例</th>
+<th>对应的SQL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>And</td>
+<td>findByNameAndAge</td>
+<td>where name = ? and age = ?</td>
+</tr>
+<tr>
+<td>Or</td>
+<td>findByNameOrAge</td>
+<td>where name = ? or age = ?</td>
+</tr>
+<tr>
+<td>Is</td>
+<td>findByNameIs</td>
+<td>where name = ?</td>
+</tr>
+<tr>
+<td>Equals</td>
+<td>findByNameEquals</td>
+<td>where name = ?</td>
+</tr>
+<tr>
+<td>Between</td>
+<td>findByAgeBetween</td>
+<td>where age between ? and ?</td>
+</tr>
+<tr>
+<td>LessThan</td>
+<td>findByAgeLessThan</td>
+<td>where age &lt; ?</td>
+</tr>
+<tr>
+<td>LessThanEquals</td>
+<td>findByAgeLessThanEqual</td>
+<td>where age &lt;= ?</td>
+</tr>
+<tr>
+<td>GreatorThan</td>
+<td>findByAgeGreaterThan</td>
+<td>where age &gt; ?</td>
+</tr>
+<tr>
+<td>GreatorThanEquals</td>
+<td>findByAgeGreaterThanEqual</td>
+<td>where age &gt;= ?</td>
+</tr>
+<tr>
+<td>After</td>
+<td>findByAgeAfter</td>
+<td>where age &gt; ?</td>
+</tr>
+<tr>
+<td>Before</td>
+<td>findByAgeBefore</td>
+<td>where age &lt; ?</td>
+</tr>
+<tr>
+<td>IsNull</td>
+<td>findByNameIsNull</td>
+<td>where name is null</td>
+</tr>
+<tr>
+<td>IsNotNull，NotNull</td>
+<td>findByNameIsNotNull，findByNameNotNull</td>
+<td>where name is not null</td>
+</tr>
+<tr>
+<td>Not</td>
+<td>findByNameNot</td>
+<td>where name &lt;&gt;?</td>
+</tr>
+<tr>
+<td>In</td>
+<td>findByAgeIn</td>
+<td>where age in (?)</td>
+</tr>
+<tr>
+<td>NotIn</td>
+<td>findByAgeNotIn</td>
+<td>where age not in (?)</td>
+</tr>
+<tr>
+<td>NotLike</td>
+<td>findByNameNotLike</td>
+<td>where name not like ?</td>
+</tr>
+<tr>
+<td>Like</td>
+<td>findByNameLike</td>
+<td>where name like ?</td>
+</tr>
+<tr>
+<td>StartingWith</td>
+<td>findByNameStartingWith</td>
+<td>where name like ‘?%’</td>
+</tr>
+<tr>
+<td>EndingWith</td>
+<td>findByNameEndingWith</td>
+<td>where name like ‘%?’</td>
+</tr>
+<tr>
+<td>Containing，Contains</td>
+<td>findByNameContaining，findByNameContains</td>
+<td>where name like ‘%?%’</td>
+</tr>
+<tr>
+<td>OrderBy</td>
+<td>findByOrderByAgeDesc</td>
+<td>order by age desc</td>
+</tr>
+<tr>
+<td>True</td>
+<td>findByBossTrue</td>
+<td>where boss = true</td>
+</tr>
+<tr>
+<td>False</td>
+<td>findByBossFalse</td>
+<td>where boss = false</td>
+</tr>
+<tr>
+<td>IgnoreCase</td>
+<td>findByNameIgnoreCase</td>
+<td>where UPPER(name) = UPPER(?)</td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>SpringData</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>SpringData</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker安装FastDFS</title>
     <url>/2020/03/16/Docker%E5%AE%89%E8%A3%85FastDFS/</url>
     <content><![CDATA[<h1 id="FastDFS"><a href="#FastDFS" class="headerlink" title="FastDFS"></a>FastDFS</h1><p>FastDFS是一个开源的轻量级分布式文件系统，它对文件进行管理，功能包括：文件存储、文件同步、文件访问（文件上传、文件下载）等，解决了大容量存储和负载均衡的问题。特别适合以文件为载体的在线服务，如相册网站、视频网站等等。</p>
